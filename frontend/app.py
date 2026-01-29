@@ -1,17 +1,16 @@
 import streamlit as st
 import requests
 
-# -----------------------------
 # RESET QUIZ
-# -----------------------------
+
 if st.button("🔄 Reset Quiz"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.rerun()
 
-# -----------------------------
+
 # SESSION STATE INIT
-# -----------------------------
+
 if "quiz_data" not in st.session_state:
     st.session_state.quiz_data = None
 
@@ -21,9 +20,9 @@ if "score" not in st.session_state:
 if "completed" not in st.session_state:
     st.session_state.completed = set()
 
-# -----------------------------
+
 # PDF UPLOAD
-# -----------------------------
+
 st.subheader("📄 Upload Study PDF")
 
 uploaded_file = st.file_uploader(
@@ -42,9 +41,8 @@ if uploaded_file is not None:
     else:
         st.error("PDF upload failed ❌")
 
-# -----------------------------
 # QUIZ INPUTS
-# -----------------------------
+
 st.title("🧠 AI Quiz Generator")
 
 topic = st.text_input("Enter quiz topic")
@@ -53,9 +51,9 @@ difficulty = st.selectbox(
     ["easy", "medium", "hard"]
 )
 
-# -----------------------------
+
 # GENERATE QUIZ (ONLY SET STATE)
-# -----------------------------
+
 if st.button("Generate Quiz"):
     response = requests.post(
         "http://127.0.0.1:8000/generate-quiz",
@@ -79,9 +77,9 @@ if st.button("Generate Quiz"):
 
         st.rerun()
 
-# -----------------------------
+
 # RENDER QUIZ (OUTSIDE BUTTON)
-# -----------------------------
+
 if st.session_state.quiz_data:
     data = st.session_state.quiz_data
 
@@ -116,9 +114,9 @@ if st.session_state.quiz_data:
 
             st.info(q["explanation"])
 
-    # -----------------------------
+
     # SUMMARY
-    # -----------------------------
+
     total_questions = len(data["questions"])
 
     answered_count = sum(
