@@ -144,3 +144,64 @@ Contributions are welcome! Please follow these steps:
 ## Support
 
 For issues or questions, please open an issue on the repository or contact the development team.
+
+
+flowchart TB
+
+    %% USER LAYER
+    U[👤 User]
+
+    %% PRESENTATION LAYER
+    UI[🖥️ Streamlit Frontend<br/>• PDF Upload<br/>• Topic Input<br/>• Difficulty Selector<br/>• Quiz UI]
+
+    %% APPLICATION LAYER
+    API[⚙️ FastAPI Backend]
+
+    %% INGESTION PIPELINE
+    PDF[📄 PDF Upload]
+    EXTRACT[🧾 Text Extraction]
+    CHUNK[✂️ Text Chunking]
+    EMBED[🔢 Embedding Model<br/>(SentenceTransformer)]
+
+    %% STORAGE
+    VDB[(🧠 FAISS Vector DB)]
+
+    %% RAG PIPELINE
+    QUERY[🔍 Query Embedding]
+    RETRIEVE[📌 Top-K Retrieval]
+    PROMPT[🧩 Prompt Builder<br/>(Difficulty Aware)]
+
+    %% LLM
+    LLM[🤖 Local LLM<br/>(Ollama – Qwen / Llama)]
+
+    %% OUTPUT
+    QUIZ[📝 Structured Quiz JSON]
+    EVAL[✅ Answer Validation<br/>+ Scoring]
+
+    %% FLOW
+    U --> UI
+    UI --> API
+
+    %% PDF Ingestion Flow
+    UI --> PDF
+    PDF --> API
+    API --> EXTRACT
+    EXTRACT --> CHUNK
+    CHUNK --> EMBED
+    EMBED --> VDB
+
+    %% Quiz Generation Flow
+    UI -->|Topic + Difficulty| API
+    API --> QUERY
+    QUERY --> VDB
+    VDB --> RETRIEVE
+    RETRIEVE --> PROMPT
+    PROMPT --> LLM
+    LLM --> QUIZ
+    QUIZ --> API
+    API --> UI
+
+    %% Quiz Attempt Flow
+    UI --> EVAL
+    EVAL --> 
+  
