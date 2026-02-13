@@ -166,3 +166,34 @@ async def upload_pdf(file: UploadFile = File(...)):
         "chunks_added": len(chunks)
     }
 
+#summarize pdf
+def summary_prompt(context: str):
+    return f"""
+You are an academic assistant.
+
+Based on the context below, generate a clear and concise summary.
+
+Context:
+{context}
+
+Instructions:
+- Summarize in 5–8 bullet points
+- Keep it clear and structured
+- Do not add information outside the context
+"""
+@app.post("/summarize")
+def summarize(payload: dict):
+    query = payload["topic"]
+
+    query_vector = embedding_service.embed_texts([query])
+    retrieved_texts = faiss_service.search(query_vector)
+
+    if not retrieved_texts:
+        return {"error": "No relevant content found."}
+
+    context = "\n".join(retrieved_texts)
+    prompt = summary_prompt(context)
+
+    summary = llm_service.generate(prompt)
+
+    return {"summary": summary}

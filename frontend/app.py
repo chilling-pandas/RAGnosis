@@ -26,26 +26,54 @@ if "completed" not in st.session_state:
 st.subheader("📄 Upload Study PDF")
 
 uploaded_file = st.file_uploader(
-    "Upload a PDF (DSA notes preferred)",
+    "Upload a PDF (Any PDF)",
     type=["pdf"]
 )
 
-if uploaded_file is not None:
-    response = requests.post(
-        "http://127.0.0.1:8000/upload-pdf",
-        files={"file": uploaded_file}
-    )
+if uploaded_file is not None and "pdf_uploaded" not in st.session_state:
+
+    with st.spinner("Indexing PDF..."):
+        response = requests.post(
+            "http://127.0.0.1:8000/upload-pdf",
+            files={"file": uploaded_file}
+        )
+
+    if response.status_code == 200:
+        st.session_state.pdf_uploaded = True
+        st.success("PDF indexed successfully ✅")
+    else:
+        st.error("PDF upload failed ❌")
+
 
     if response.status_code == 200:
         st.success("PDF indexed successfully ✅")
     else:
         st.error("PDF upload failed ❌")
 
+
+
 # QUIZ INPUTS
 
 st.title("🧠 AI Quiz Generator")
 
 topic = st.text_input("Enter quiz topic")
+#summarize pdf
+if st.button("📚 Summarize Topic"):
+    response = requests.post(
+        "http://127.0.0.1:8000/summarize",
+        json={"topic": topic}
+    )
+
+    if response.status_code == 200:
+        data = response.json()
+        if "summary" in data:
+            st.subheader("📖 Summary")
+            st.write(data["summary"])
+        else:
+            st.error(data.get("error", "Error generating summary"))
+    else:
+        st.error("Backend error")
+
 difficulty = st.selectbox(
     "Select difficulty level",
     ["easy", "medium", "hard"]
