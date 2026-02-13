@@ -1,6 +1,10 @@
 fastapi
 uvicorn
-requests
 pydantic
+requests
 python-multipart
 pypdf
+sentence-transformers
+faiss-cpu
+numpy
+
