@@ -1,4 +1,5 @@
-# 🧠 Quiz AI
+# 🧠 RAGnosis – Retrieval-Augmented AI Learning System
+
 
 An intelligent quiz generation system that uses AI to create multiple-choice questions from any topic. The system combines semantic search, embeddings, and large language models to generate contextually relevant quizzes.
 
